@@ -258,12 +258,12 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
-            max-width: 900px;
+            max-width: 800px;
             margin: 0 auto;
         }
 
         .contact-item {
-            display: grid;
+            display: flex;
             align-items: center;
             justify-content: center;
             gap: 1rem;
@@ -472,7 +472,7 @@
                 </button>
                 
                 <div class="success-message" id="successMessage">
-                    Thank you! We'll be in touch to discuss partnership opportunities.
+                    Thank you! We'll be in touch within 24 hours to discuss partnership opportunities.
                 </div>
             </form>
         </div>
@@ -483,19 +483,38 @@
             <div class="contact-item">
                 <div class="contact-icon">📞</div>
                 <div class="contact-details">
+                    <div>Phone Numbers</div>
                     <div>+971 50 531 7451</div>
                     <div>+971 50 616 3192</div>
                 </div>
             </div>
             
             <div class="contact-item">
+                <div class="contact-icon">📧</div>
+                <div class="contact-details">
+                    <div>Email Addresses</div>
+                    <div>ptall@terangaglobaluae.com</div>
+                    <div>celestentl@terangaglobaluae.com</div>
+                </div>
+            </div>
+            
+            <div class="contact-item">
                 <div class="contact-icon">📍</div>
                 <div class="contact-details">
+                    <div>Our Location</div>
                     <div>Masdar City Free Zone</div>
                     <div>Abu Dhabi, UAE</div>
                 </div>
             </div>
             
+            <div class="contact-item">
+                <div class="contact-icon">🌐</div>
+                <div class="contact-details">
+                    <div>Website</div>
+                    <div>www.terangaglobaluae.com</div>
+                </div>
+            </div>
+        </div>
         
         <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.2);">
             <p>&copy; 2025 Teranga Global LLC. Building Bridges. Creating Opportunities.</p>
@@ -503,7 +522,11 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
+        // Initialize EmailJS
+        emailjs.init('YOUR_PUBLIC_KEY'); // Replace with your actual public key
+        
         document.getElementById('partnerForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -517,63 +540,55 @@
             
             // Collect form data
             const data = {
-                name: formData.get('name'),
-                email: formData.get('email'),
+                from_name: formData.get('name'),
+                from_email: formData.get('email'),
                 company: formData.get('company'),
                 business: formData.get('business'),
                 interest: formData.get('interest'),
+                message: `New partnership inquiry from ${formData.get('name')} at ${formData.get('company')}. Business area: ${formData.get('business')}. Interest: ${formData.get('interest')}`,
                 timestamp: new Date().toISOString(),
                 source: 'Conference Landing Page'
             };
             
-            // Simulate form submission (replace with actual email service)
-            setTimeout(() => {
-                // Show success message
-                successMessage.style.display = 'block';
-                
-                // Reset form
-                this.reset();
-                
-                // Reset button
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Start Our Partnership Journey';
-                
-                // Log data (in real implementation, send to your email service)
-                console.log('Partner Interest Submitted:', data);
-                
-                // Here you would integrate with your email service like:
-                // - EmailJS
-                // - Formspree
-                // - Netlify Forms
-                // - Your own backend API
-                
-                // Example with EmailJS (you'd need to set this up):
-                
-                emailjs.send('service_kiiv6qm', 'template_b31p5jc'), {
-                    to_email: 'titinkhuwa6199@gmail.com',
-                    from_name: data.name,
-                    from_email: data.email,
-                    company: data.company,
-                    business: data.business,
-                    interest: data.interest,
-                    message: `New partnership inquiry from ${data.name} at ${data.company}`
+            // Send email using EmailJS
+            emailjs.send('service_kiiv6qm', 'template_b31p5jc', data)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    
+                    // Show success message
+                    successMessage.style.display = 'block';
+                    successMessage.textContent = 'Thank you! Your message has been sent successfully. We\'ll be in touch within 24 hours.';
+                    
+                    // Reset form
+                    document.getElementById('partnerForm').reset();
+                    
+                    // Reset button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Start Our Partnership Journey';
+                    
+                    // Hide success message after 7 seconds
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 7000);
+                    
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    
+                    // Show error message
+                    successMessage.style.display = 'block';
+                    successMessage.style.background = 'linear-gradient(45deg, #f44336, #e91e63)';
+                    successMessage.textContent = 'Sorry, there was an error sending your message. Please try again or contact us directly.';
+                    
+                    // Reset button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Start Our Partnership Journey';
+                    
+                    // Hide error message after 7 seconds
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                        successMessage.style.background = 'linear-gradient(45deg, #4caf50, #8bc34a)';
+                    }, 7000);
                 });
-                
-                
-                // Hide success message after 5 seconds
-                setTimeout(() => {
-                    successMessage.style.display = 'none';
-                }, 5000);
-                
-            }, 1500);
-        });
-
-        // Smooth scrolling for CTA button
-        document.querySelector('a[href="#connect"]').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('connect').scrollIntoView({
-                behavior: 'smooth'
-            });
         });
 
         // Add scroll animations
